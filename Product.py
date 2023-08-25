@@ -199,7 +199,7 @@ class DataLoadMergePreprocess:
         return df.drop('Weekly_Sales', axis=1), df['Weekly_Sales'], X_train, X_test, y_train, y_test, scaler
 
 
-@st.cache_data
+ 
 def data_loader(load_test=False, load_train_test=False, load_df=False):
     data_processor = DataLoadMergePreprocess()
     data_processor.load_merge_data()
@@ -227,7 +227,7 @@ def load_data(data_loader, data_type):
     elif data_type == 'All Data':
         return test_data, X_train, X_test, y_train, y_test
 
-@st.cache_data
+ 
 def data_resample(y):
     return y.resample('W').mean()
 
