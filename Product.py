@@ -22,8 +22,12 @@ from sklearn.ensemble import StackingRegressor
 
 
 class DataLoadMergePreprocess:
-    def __init__(self, features_path='features.csv', stores_path='stores.csv', train_path='train.csv', test_path='test.csv',
-                 selected_features=['Store', 'Dept', 'Type', 'Size', 'Week', 'Thanksgiving_Day']):
+    def __init__(self, features_path='https://github.com/hamzahjabari98/Weekly_Sales_Forecasting/blob/main/features.csv',
+                  stores_path='https://github.com/hamzahjabari98/Weekly_Sales_Forecasting/blob/main/stores.csv', 
+                  train_path='https://github.com/hamzahjabari98/Weekly_Sales_Forecasting/blob/main/train.csv',
+                  test_path='https://github.com/hamzahjabari98/Weekly_Sales_Forecasting/blob/main/test.csv',
+                  selected_features=['Store', 'Dept', 'Type', 'Size', 'Week', 'Thanksgiving_Day']):
+        
         self.features_path = features_path
         self.stores_path = stores_path
         self.train_path = train_path
