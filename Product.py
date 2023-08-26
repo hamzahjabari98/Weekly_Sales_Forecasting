@@ -22,10 +22,10 @@ from sklearn.ensemble import StackingRegressor
 
 
 class DataLoadMergePreprocess:
-    def __init__(self, features_path='https://github.com/hamzahjabari98/Weekly_Sales_Forecasting/blob/main/features.csv',
-                  stores_path='https://github.com/hamzahjabari98/Weekly_Sales_Forecasting/blob/main/stores.csv', 
-                  train_path='https://github.com/hamzahjabari98/Weekly_Sales_Forecasting/blob/main/train.csv',
-                  test_path='https://github.com/hamzahjabari98/Weekly_Sales_Forecasting/blob/main/test.csv',
+    def __init__(self, features_path='https://github.com/hamzahjabari98/Weekly_Sales_Forecasting/raw/main/features.csv',
+                  stores_path='https://github.com/hamzahjabari98/Weekly_Sales_Forecasting/raw/main/stores.csv', 
+                  train_path='https://github.com/hamzahjabari98/Weekly_Sales_Forecasting/raw/main/train.csv',
+                  test_path='https://github.com/hamzahjabari98/Weekly_Sales_Forecasting/raw/main/test.csv',
                   selected_features=['Store', 'Dept', 'Type', 'Size', 'Week', 'Thanksgiving_Day']):
         
         self.features_path = features_path
@@ -368,7 +368,7 @@ def main():
     col1, col2 = header_container.columns([3, 7])
 
     # Display the logo
-    col1.image('https://github.com/hamzahjabari98/Weekly_Sales_Forecasting/blob/main/Walmart_logo_transparent.png', width=200)
+    col1.image('https://github.com/hamzahjabari98/Weekly_Sales_Forecasting/raw/main/Walmart_logo_transparent.png', width=200)
 
     # Display the title
     col2.title('Walmart Sales Forecasting')
