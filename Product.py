@@ -283,9 +283,9 @@ def resample_plot(arr1, arr2, only_resample=False, only_plot=True, resample_and_
         return data_resample(arr1), data_resample(arr2)
 
 def model_load(selected_model):
-    with open(f'{selected_model}_model.joblib', 'rb') as file:
+    with open(f'https://github.com/hamzahjabari98/Weekly_Sales_Forecasting/raw/main/{selected_model}_model.joblib', 'rb') as file:
         return joblib.load(file)
-
+    
 def model_predict(model, X):
     return model.predict(X)
 
