@@ -368,7 +368,7 @@ def main():
     col1, col2 = header_container.columns([3, 7])
 
     # Display the logo
-    # col1.image('Walmart_logo_transparent.png', width=200)
+    col1.image('https://github.com/hamzahjabari98/Weekly_Sales_Forecasting/blob/main/Walmart_logo_transparent.png', width=200)
 
     # Display the title
     col2.title('Walmart Sales Forecasting')
