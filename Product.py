@@ -43,7 +43,6 @@ class DataLoadMergePreprocess:
         self.test_data = pd.DataFrame()
         self.scaler = None
 
-    @st.cache
     def load_merge_data(self):
         """
         Load and merge data from features, stores, and train CSV files into one dataframe.
@@ -72,7 +71,6 @@ class DataLoadMergePreprocess:
         self.df = pd.merge(train_stores, self.features, on=['Store', 'Date', 'IsHoliday'])
         self.test_data = pd.merge(test_stores, self.features, on=['Store', 'Date', 'IsHoliday'])
 
-    @st.cache
     def preprocess(self, holiday_columns=True, encoding=True, outlier=True, scale_test=True, scale_split=True):
         if self.df is None:
             raise Exception("Data has not been loaded and merged yet.")
@@ -156,12 +154,18 @@ class DataLoadMergePreprocess:
         return df
 
     def outlier_treatment(self, df):
-
+        whisker_multiplier = 1.5
         col_num = ['Size', 'Temperature', 'Fuel_Price', 'MarkDown1', 'MarkDown2', 'MarkDown3', 'MarkDown4', 'MarkDown5',
-               'CPI', 'Unemployment']
-        lower_whisker = df[col_num].quantile(0.25) - 1.5 * (df[col_num].quantile(0.75) - df[col_num].quantile(0.25))
-        upper_whisker = df[col_num].quantile(0.75) + 1.5 * (df[col_num].quantile(0.75) - df[col_num].quantile(0.25))
-        df[col_num] = np.clip(df[col_num], lower_whisker, upper_whisker)
+                   'CPI', 'Unemployment']
+        for column in col_num:
+            Q1 = df[column].quantile(0.25)
+            Q3 = df[column].quantile(0.75)
+            IQR = Q3 - Q1
+            lower_whisker = Q1 - whisker_multiplier * IQR
+            upper_whisker = Q3 + whisker_multiplier * IQR
+
+            df[column] = np.where(df[column] < lower_whisker, lower_whisker, df[column])
+            df[column] = np.where(df[column] > upper_whisker, upper_whisker, df[column])
 
         return df
 
@@ -205,7 +209,7 @@ class DataLoadMergePreprocess:
         return df.drop('Weekly_Sales', axis=1), df['Weekly_Sales'], X_train, X_test, y_train, y_test, scaler
 
 
-@st.cache 
+ 
 def data_loader(load_test=False, load_train_test=False, load_df=False):
     data_processor = DataLoadMergePreprocess()
     data_processor.load_merge_data()
