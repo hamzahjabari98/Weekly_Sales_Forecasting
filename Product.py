@@ -55,12 +55,10 @@ class DataLoadMergePreprocess:
         self.test = pd.read_csv(self.test_path)
 
         # Fill missing values in the 'MarkDown' columns with zeros
-        self.df = self.df.fillna({
-        'MarkDown1': self.df['MarkDown1'].median(),
-        'MarkDown2': self.df['MarkDown2'].median(),
-        'MarkDown3': self.df['MarkDown3'].median(),
-        'MarkDown4': self.df['MarkDown4'].median(),
-        'MarkDown5': self.df['MarkDown5'].median()}).ffill()
+        MarkDown_column = ['MarkDown1', 'MarkDown2', 'MarkDown3', 'MarkDown4', 'MarkDown5']
+        for column in MarkDown_column:
+            median_value = self.features[column].median()
+            self.features[column] = self.features[column].fillna(median_value)
 
         # Fill missing values in 'CPI' and 'Unemployment' columns with the last recorded non-null value
         other = ['CPI', 'Unemployment']
