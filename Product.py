@@ -21,13 +21,17 @@ from catboost import CatBoostRegressor
 from sklearn.ensemble import StackingRegressor
 import requests
 
-
+FEATURES_URL = 'https://github.com/hamzahjabari98/Weekly_Sales_Forecasting/raw/main/features.csv'
+STORES_URL = 'https://github.com/hamzahjabari98/Weekly_Sales_Forecasting/raw/main/stores.csv'
+TRAIN_URL = 'https://github.com/hamzahjabari98/Weekly_Sales_Forecasting/raw/main/train.csv'
+TEST_URL = 'https://github.com/hamzahjabari98/Weekly_Sales_Forecasting/raw/main/test.csv'
+LOGO_URL = 'https://github.com/hamzahjabari98/Weekly_Sales_Forecasting/raw/main/Walmart_logo_transparent.png'
 
 class DataLoadMergePreprocess:
-    def __init__(self, features_path='https://github.com/hamzahjabari98/Weekly_Sales_Forecasting/raw/main/features.csv',
-                  stores_path='https://github.com/hamzahjabari98/Weekly_Sales_Forecasting/raw/main/stores.csv', 
-                  train_path='https://github.com/hamzahjabari98/Weekly_Sales_Forecasting/raw/main/train.csv',
-                  test_path='https://github.com/hamzahjabari98/Weekly_Sales_Forecasting/raw/main/test.csv',
+    def __init__(self, features_path=FEATURES_URL,
+                  stores_path=STORES_URL, 
+                  train_path=TRAIN_URL,
+                  test_path=TEST_URL,
                   selected_features=['Store', 'Dept', 'Type', 'Size', 'Week', 'Thanksgiving_Day']):
         
         self.features_path = features_path
@@ -39,6 +43,7 @@ class DataLoadMergePreprocess:
         self.test_data = pd.DataFrame()
         self.scaler = None
 
+    @st.cache
     def load_merge_data(self):
         """
         Load and merge data from features, stores, and train CSV files into one dataframe.
@@ -50,10 +55,12 @@ class DataLoadMergePreprocess:
         self.test = pd.read_csv(self.test_path)
 
         # Fill missing values in the 'MarkDown' columns with zeros
-        MarkDown_column = ['MarkDown1', 'MarkDown2', 'MarkDown3', 'MarkDown4', 'MarkDown5']
-        for column in MarkDown_column:
-            median_value = self.features[column].median()
-            self.features[column] = self.features[column].fillna(median_value)
+        self.df = self.df.fillna({
+        'MarkDown1': self.df['MarkDown1'].median(),
+        'MarkDown2': self.df['MarkDown2'].median(),
+        'MarkDown3': self.df['MarkDown3'].median(),
+        'MarkDown4': self.df['MarkDown4'].median(),
+        'MarkDown5': self.df['MarkDown5'].median()}).ffill()
 
         # Fill missing values in 'CPI' and 'Unemployment' columns with the last recorded non-null value
         other = ['CPI', 'Unemployment']
@@ -67,6 +74,7 @@ class DataLoadMergePreprocess:
         self.df = pd.merge(train_stores, self.features, on=['Store', 'Date', 'IsHoliday'])
         self.test_data = pd.merge(test_stores, self.features, on=['Store', 'Date', 'IsHoliday'])
 
+    @st.cache
     def preprocess(self, holiday_columns=True, encoding=True, outlier=True, scale_test=True, scale_split=True):
         if self.df is None:
             raise Exception("Data has not been loaded and merged yet.")
@@ -150,18 +158,12 @@ class DataLoadMergePreprocess:
         return df
 
     def outlier_treatment(self, df):
-        whisker_multiplier = 1.5
-        col_num = ['Size', 'Temperature', 'Fuel_Price', 'MarkDown1', 'MarkDown2', 'MarkDown3', 'MarkDown4', 'MarkDown5',
-                   'CPI', 'Unemployment']
-        for column in col_num:
-            Q1 = df[column].quantile(0.25)
-            Q3 = df[column].quantile(0.75)
-            IQR = Q3 - Q1
-            lower_whisker = Q1 - whisker_multiplier * IQR
-            upper_whisker = Q3 + whisker_multiplier * IQR
 
-            df[column] = np.where(df[column] < lower_whisker, lower_whisker, df[column])
-            df[column] = np.where(df[column] > upper_whisker, upper_whisker, df[column])
+        col_num = ['Size', 'Temperature', 'Fuel_Price', 'MarkDown1', 'MarkDown2', 'MarkDown3', 'MarkDown4', 'MarkDown5',
+               'CPI', 'Unemployment']
+        lower_whisker = df[col_num].quantile(0.25) - 1.5 * (df[col_num].quantile(0.75) - df[col_num].quantile(0.25))
+        upper_whisker = df[col_num].quantile(0.75) + 1.5 * (df[col_num].quantile(0.75) - df[col_num].quantile(0.25))
+        df[col_num] = np.clip(df[col_num], lower_whisker, upper_whisker)
 
         return df
 
@@ -205,7 +207,7 @@ class DataLoadMergePreprocess:
         return df.drop('Weekly_Sales', axis=1), df['Weekly_Sales'], X_train, X_test, y_train, y_test, scaler
 
 
- 
+@st.cache 
 def data_loader(load_test=False, load_train_test=False, load_df=False):
     data_processor = DataLoadMergePreprocess()
     data_processor.load_merge_data()
@@ -378,7 +380,7 @@ def main():
     col1, col2 = header_container.columns([3, 7])
 
     # Display the logo
-    col1.image('https://github.com/hamzahjabari98/Weekly_Sales_Forecasting/raw/main/Walmart_logo_transparent.png', width=200)
+    col1.image(LOGO_URL, width=200)
 
     # Display the title
     col2.title('Walmart Sales Forecasting')
