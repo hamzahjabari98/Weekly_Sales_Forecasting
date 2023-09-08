@@ -48,18 +48,19 @@ To get started with this project, follow these steps:
 
 ```bash
 git clone https://github.com/hamzahjabari98/Weekly_Sales_Forecasting.git
-
+```
 2. Install the required dependencies.
 
 ```bash
 pip install -r requirements.txt
-
+```
 3. Install Streamlit.
 
 ```bash
 pip install streamlit
-
+```
 4. Run the Streamlit app
 
 ```bash
 streamlit run https://raw.githubusercontent.com/hamzahjabari98/Weekly_Sales_Forecasting/main/Product.py
+```
