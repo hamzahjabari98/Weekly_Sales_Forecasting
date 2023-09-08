@@ -1,5 +1,4 @@
 # Weekly Sales Forecasting
-# Weekly Sales Forecasting
 
 This project focuses on weekly sales forecasting and includes two Jupyter notebooks for data analysis, preprocessing, feature engineering, and model selection, along with a Streamlit app for interactive forecasting using different models.
 
